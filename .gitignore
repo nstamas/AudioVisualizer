@@ -1,0 +1,83 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vcxproj
+*.vcxproj.filters
+*.sln
+
+# Build directories
+build/
+out/
+bin/
+lib/
+x64/
+x86/
+Debug/
+Release/
+RelWithDebInfo/
+MinSizeRel/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+*.cmake
+!CMakeLists.txt
+Makefile
+
+# Compiled files
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+*.pdb
+*.ilk
+*.exp
+
+# Logs
+*.log
+audiovisualizer.log
+
+# Configuration (user-specific)
+config_local.json
+
+# Output files
+*.mp4
+*.avi
+*.mkv
+*.mov
+output.*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Third-party (download separately)
+third_party/imgui/*.cpp
+third_party/imgui/*.h
+third_party/stb/stb_image.h
+
+# Presets and assets (too large for git, download separately)
+assets/presets/*.milk
+assets/presets/*.prjm
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.cache
