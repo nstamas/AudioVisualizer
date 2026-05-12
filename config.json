@@ -1,0 +1,38 @@
+{
+  "audio": {
+    "input_device": "default",
+    "sample_rate": 44100,
+    "buffer_size": 512,
+    "fft_size": 2048
+  },
+  "visualization": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 60,
+    "preset_path": "assets/presets/",
+    "preset_duration": 30.0,
+    "smooth_transitions": true,
+    "beat_sensitivity": 1.0,
+    "aspect_correction": true
+  },
+  "recording": {
+    "codec": "libx264",
+    "bitrate": "10M",
+    "output_format": "mp4",
+    "fps": 60
+  },
+  "effects": {
+    "masking": false,
+    "outline": false,
+    "shadow": false,
+    "smearing": false,
+    "blur": false,
+    "bloom": false
+  },
+  "window": {
+    "title": "Audio Visualizer",
+    "fullscreen": false,
+    "vsync": true,
+    "msaa_samples": 4
+  }
+}
