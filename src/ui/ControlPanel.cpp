@@ -32,8 +32,8 @@ void ControlPanel::Render() {
         return;
     }
 
-    ImGui::SetNextWindowSize(ImVec2(350, 700), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowPos(ImVec2(10, 40), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(437, 875), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(10, 80), ImGuiCond_FirstUseEver);
 
     if (ImGui::Begin("Control Panel", &isVisible_)) {
         if (ImGui::CollapsingHeader("Audio", ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -51,6 +51,10 @@ void ControlPanel::Render() {
         if (ImGui::CollapsingHeader("Sprites")) {
             RenderSpriteControls();
         }
+        
+        // FPS display at the bottom
+        ImGui::Separator();
+        ImGui::Text("FPS: %.1f", app_->GetFPS());
     }
     ImGui::End();
 }

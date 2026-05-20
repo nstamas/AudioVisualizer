@@ -1,4 +1,7 @@
 #include "MainWindow.h"
+#include "ControlPanel.h"
+#include "PresetManager.h"
+#include "LogWindow.h"
 #include "core/Application.h"
 #include "utils/FileIO.h"
 #include "utils/Logger.h"
@@ -87,8 +90,18 @@ void MainWindow::Render() {
                 // TODO: Toggle fullscreen
             }
             ImGui::Separator();
-            ImGui::MenuItem("Control Panel", nullptr, true);
-            ImGui::MenuItem("Preset Manager", nullptr, true);
+            bool controlPanelVisible = app_->GetControlPanel()->IsVisible();
+            if (ImGui::MenuItem("Control Panel", nullptr, &controlPanelVisible)) {
+                app_->GetControlPanel()->SetVisible(controlPanelVisible);
+            }
+            bool presetManagerVisible = app_->GetPresetManager()->IsVisible();
+            if (ImGui::MenuItem("Preset Manager", nullptr, &presetManagerVisible)) {
+                app_->GetPresetManager()->SetVisible(presetManagerVisible);
+            }
+            bool logWindowVisible = app_->GetLogWindow()->IsVisible();
+            if (ImGui::MenuItem("Log Window", nullptr, &logWindowVisible)) {
+                app_->GetLogWindow()->SetVisible(logWindowVisible);
+            }
             ImGui::EndMenu();
         }
 
@@ -118,7 +131,7 @@ void MainWindow::Render() {
         ImGui::Text("A powerful audio visualization tool");
         ImGui::Text("Powered by ProjectM and FFmpeg");
         ImGui::Separator();
-        if (ImGui::Button("Close", ImVec2(120, 0))) {
+        if (ImGui::Button("Close", ImVec2(150, 0))) {
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();

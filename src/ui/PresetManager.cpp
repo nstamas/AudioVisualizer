@@ -8,7 +8,7 @@ namespace UI {
 
 PresetManager::PresetManager(Core::Application* app)
     : app_(app)
-    , isVisible_(true)
+    , isVisible_(false)
     , selectedPreset_(0)
 {
     std::memset(searchBuffer_, 0, sizeof(searchBuffer_));
@@ -23,7 +23,7 @@ void PresetManager::Render() {
         return;
     }
 
-    ImGui::SetNextWindowSize(ImVec2(300, 500), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(375, 625), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowPos(ImVec2(1610, 40), ImGuiCond_FirstUseEver);
 
     if (ImGui::Begin("Preset Manager", &isVisible_)) {

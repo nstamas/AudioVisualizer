@@ -101,6 +101,7 @@ set(SOURCES
     src/ui/MainWindow.cpp
     src/ui/ControlPanel.cpp
     src/ui/PresetManager.cpp
+    src/ui/LogWindow.cpp
     
     # Utils
     src/utils/Config.cpp
@@ -127,6 +128,7 @@ set(HEADERS
     src/ui/MainWindow.h
     src/ui/ControlPanel.h
     src/ui/PresetManager.h
+    src/ui/LogWindow.h
     
     # Utils
     src/utils/Config.h
@@ -134,12 +136,28 @@ set(HEADERS
     src/utils/Logger.h
 )
 
+# Windows resource file for icon
+if(WIN32)
+    set(RESOURCE_FILES resources.rc)
+endif()
+
 # Create executable
-add_executable(${PROJECT_NAME} 
-    ${SOURCES} 
-    ${HEADERS}
-    ${IMGUI_SOURCES}
-)
+if(WIN32)
+    add_executable(${PROJECT_NAME} WIN32
+        ${SOURCES} 
+        ${HEADERS}
+        ${IMGUI_SOURCES}
+        ${RESOURCE_FILES}
+    )
+    # Allow main() instead of WinMain() while hiding console
+    target_link_options(${PROJECT_NAME} PRIVATE "/ENTRY:mainCRTStartup")
+else()
+    add_executable(${PROJECT_NAME} 
+        ${SOURCES} 
+        ${HEADERS}
+        ${IMGUI_SOURCES}
+    )
+endif()
 
 # Link libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE
@@ -215,6 +233,12 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/assets
     $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    ${CMAKE_SOURCE_DIR}/icon.png
+    $<TARGET_FILE_DIR:${PROJECT_NAME}>/icon.png
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    ${CMAKE_SOURCE_DIR}/icon.png
+    ${CMAKE_BINARY_DIR}/icon.png
 )
 
 # Install rules
@@ -236,3 +260,4 @@ message(STATUS "  C++ Standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "  Build Type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "  Install Prefix: ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "")
+

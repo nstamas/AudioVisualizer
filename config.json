@@ -2,8 +2,8 @@
   "audio": {
     "input_device": "default",
     "sample_rate": 44100,
-    "buffer_size": 512,
-    "fft_size": 2048
+    "buffer_size": 2048,
+    "fft_size": 256
   },
   "visualization": {
     "width": 1920,
