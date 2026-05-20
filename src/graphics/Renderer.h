@@ -24,6 +24,10 @@ public:
     void EndFrame();
 
     void Composite();
+    
+    // Resize handling
+    void Resize(int width, int height);
+    
 #ifdef HAVE_FFMPEG
     void CaptureFrame(Core::VideoRecorder* recorder);
 #endif

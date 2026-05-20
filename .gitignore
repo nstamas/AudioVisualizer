@@ -67,14 +67,12 @@ output.*
 .AppleDouble
 .LSOverride
 
-# Third-party (download separately)
-third_party/imgui/*.cpp
-third_party/imgui/*.h
-third_party/stb/stb_image.h
+# ImGui runtime settings
+imgui.ini
 
-# Presets and assets (too large for git, download separately)
-assets/presets/*.milk
-assets/presets/*.prjm
+# Session/temporary files
+SESSION_SUMMARY.md
+Chat*.txt
 
 # Temporary files
 *.tmp

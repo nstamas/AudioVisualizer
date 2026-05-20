@@ -14,6 +14,9 @@ public:
     ~ControlPanel();
 
     void Render();
+    
+    bool IsVisible() const { return isVisible_; }
+    void SetVisible(bool visible) { isVisible_ = visible; }
 
 private:
     void RenderAudioControls();

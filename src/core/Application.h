@@ -25,6 +25,7 @@ namespace AudioVisualizer {
         class MainWindow;
         class ControlPanel;
         class PresetManager;
+        class LogWindow;
     }
 }
 
@@ -62,6 +63,11 @@ public:
     GLFWwindow* GetWindow() const { return window_; }
     Utils::Config& GetConfig() { return config_; }
     VisualizationEngine* GetVisualizationEngine() const { return visualizationEngine_.get(); }
+    UI::ControlPanel* GetControlPanel() const { return controlPanel_.get(); }
+    UI::PresetManager* GetPresetManager() const { return presetManager_.get(); }
+    UI::LogWindow* GetLogWindow() const { return logWindow_.get(); }
+    
+    float GetFPS() const { return fps_; }
 
 private:
     void ProcessInput();
@@ -95,6 +101,7 @@ private:
     std::unique_ptr<UI::MainWindow> mainWindow_;
     std::unique_ptr<UI::ControlPanel> controlPanel_;
     std::unique_ptr<UI::PresetManager> presetManager_;
+    std::unique_ptr<UI::LogWindow> logWindow_;
 
     // State
     bool isRunning_;

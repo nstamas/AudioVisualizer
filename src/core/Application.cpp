@@ -11,6 +11,7 @@
 #include "ui/MainWindow.h"
 #include "ui/ControlPanel.h"
 #include "ui/PresetManager.h"
+#include "ui/LogWindow.h"
 #include "utils/Logger.h"
 
 #include <GL/glew.h>
@@ -18,6 +19,7 @@
 #include <imgui.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
+#include <stb_image.h>
 
 namespace AudioVisualizer {
 namespace Core {
@@ -54,6 +56,11 @@ static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, i
                 break;
         }
     }
+}
+
+static void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
+    auto* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+    // The actual resize will be handled in the main loop to avoid threading issues
 }
 
 Application::Application(const Utils::Config& config)
@@ -107,7 +114,33 @@ bool Application::Initialize() {
     glfwMakeContextCurrent(window_);
     glfwSetWindowUserPointer(window_, this);
     glfwSetKeyCallback(window_, KeyCallback);
+    glfwSetFramebufferSizeCallback(window_, FramebufferSizeCallback);
     glfwSwapInterval(1); // Enable vsync
+
+    // Set window icon - try multiple paths
+    GLFWimage icon;
+    int channels;
+    const char* iconPaths[] = {
+        "icon.png",
+        "bin/Release/icon.png",
+        "../icon.png"
+    };
+    
+    bool iconLoaded = false;
+    for (const char* path : iconPaths) {
+        icon.pixels = stbi_load(path, &icon.width, &icon.height, &channels, 4);
+        if (icon.pixels) {
+            glfwSetWindowIcon(window_, 1, &icon);
+            stbi_image_free(icon.pixels);
+            Utils::Logger::Info(std::string("Window icon loaded from: ") + path);
+            iconLoaded = true;
+            break;
+        }
+    }
+    
+    if (!iconLoaded) {
+        Utils::Logger::Warning("Failed to load window icon from any path");
+    }
 
     // Initialize GLEW
     glewExperimental = GL_TRUE;
@@ -125,6 +158,9 @@ bool Application::Initialize() {
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    
+    // Increase font/UI scale by 25%
+    io.FontGlobalScale = 1.25f;
 
     ImGui::StyleColorsDark();
     
@@ -194,6 +230,7 @@ bool Application::Initialize() {
     mainWindow_ = std::make_unique<UI::MainWindow>(this);
     controlPanel_ = std::make_unique<UI::ControlPanel>(this);
     presetManager_ = std::make_unique<UI::PresetManager>(this);
+    logWindow_ = std::make_unique<UI::LogWindow>();
 
     isRunning_ = true;
     Utils::Logger::Info("Application initialized successfully");
@@ -205,6 +242,16 @@ int Application::Run() {
     lastFrameTime_ = glfwGetTime();
 
     while (isRunning_ && !glfwWindowShouldClose(window_)) {
+        // Check for window resize
+        int fbWidth, fbHeight;
+        glfwGetFramebufferSize(window_, &fbWidth, &fbHeight);
+        if (fbWidth != windowWidth_ || fbHeight != windowHeight_) {
+            windowWidth_ = fbWidth;
+            windowHeight_ = fbHeight;
+            renderer_->Resize(fbWidth, fbHeight);
+            visualizationEngine_->Resize(fbWidth, fbHeight);
+        }
+        
         double currentTime = glfwGetTime();
         float deltaTime = static_cast<float>(currentTime - lastFrameTime_);
         lastFrameTime_ = currentTime;
@@ -217,7 +264,7 @@ int Application::Run() {
         glfwSwapBuffers(window_);
         glfwPollEvents();
     }
-
+    
     return 0;
 }
 
@@ -320,16 +367,7 @@ void Application::RenderUI() {
     mainWindow_->Render();
     controlPanel_->Render();
     presetManager_->Render();
-
-    // FPS counter
-    ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always);
-    ImGui::SetNextWindowBgAlpha(0.3f);
-    ImGui::Begin("Stats", nullptr, 
-                 ImGuiWindowFlags_NoDecoration | 
-                 ImGuiWindowFlags_AlwaysAutoResize |
-                 ImGuiWindowFlags_NoFocusOnAppearing);
-    ImGui::Text("FPS: %.1f", fps_);
-    ImGui::End();
+    logWindow_->Render();
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

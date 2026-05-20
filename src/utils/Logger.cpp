@@ -13,6 +13,8 @@ std::recursive_mutex Logger::logMutex_;
 LogLevel Logger::currentLevel_ = LogLevel::Info;
 bool Logger::consoleOutputEnabled_ = true;
 bool Logger::initialized_ = false;
+std::deque<LogEntry> Logger::recentEntries_;
+const size_t Logger::maxRecentEntries_;
 
 void Logger::Initialize(const std::string& logFilePath) {
     std::lock_guard<std::recursive_mutex> lock(logMutex_);
@@ -24,6 +26,10 @@ void Logger::Initialize(const std::string& logFilePath) {
     logFile_.open(logFilePath, std::ios::out | std::ios::app);
     if (logFile_.is_open()) {
         initialized_ = true;
+        // Disable console output for Windows GUI apps (no console window)
+#ifdef _WIN32
+        consoleOutputEnabled_ = false;
+#endif
         Log(LogLevel::Info, "Logger initialized");
     } else {
         std::cerr << "Failed to open log file: " << logFilePath << std::endl;
@@ -73,6 +79,16 @@ void Logger::Log(LogLevel level, const std::string& message) {
     std::string levelStr = GetLevelString(level);
     std::string logMessage = "[" + timestamp + "] [" + levelStr + "] " + message;
 
+    // Store in recent entries buffer
+    LogEntry entry;
+    entry.level = level;
+    entry.timestamp = timestamp;
+    entry.message = message;
+    recentEntries_.push_back(entry);
+    if (recentEntries_.size() > maxRecentEntries_) {
+        recentEntries_.pop_front();
+    }
+
     // Output to console if enabled
     if (consoleOutputEnabled_) {
         if (level == LogLevel::Error) {
@@ -117,6 +133,22 @@ void Logger::SetLogLevel(LogLevel level) {
 
 void Logger::EnableConsoleOutput(bool enabled) {
     consoleOutputEnabled_ = enabled;
+}
+
+std::vector<LogEntry> Logger::GetRecentEntries(size_t maxCount) {
+    std::lock_guard<std::recursive_mutex> lock(logMutex_);
+    
+    size_t count = std::min(maxCount, recentEntries_.size());
+    size_t start = recentEntries_.size() - count;
+    
+    std::vector<LogEntry> result;
+    result.reserve(count);
+    
+    for (size_t i = start; i < recentEntries_.size(); ++i) {
+        result.push_back(recentEntries_[i]);
+    }
+    
+    return result;
 }
 
 } // namespace Utils

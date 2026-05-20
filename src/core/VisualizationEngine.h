@@ -60,6 +60,9 @@ public:
     bool Initialize();
     bool InitializeShaders(Graphics::ShaderManager* shaderManager);
     void Shutdown();
+    
+    // Resize handling
+    void Resize(int width, int height);
 
     void Update(const AudioData& audioData, float deltaTime);
     void Render();
@@ -152,6 +155,11 @@ private:
     // Shader-based visualization
     Graphics::ShaderManager* shaderManager_;
     float elapsedTime_;  // For shader animations
+    
+    // Smoothed audio values for shaders (prevents jitter)
+    float smoothedBass_;
+    float smoothedMid_;
+    float smoothedTreble_;
     
     bool isInitialized_;
 };

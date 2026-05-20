@@ -2,6 +2,10 @@
 
 A powerful audio visualization desktop application built with C++ and ProjectM, featuring psychedelic visuals, sprite injection, and video recording capabilities.
 
+## Screenshot
+
+![Audio Visualizer Interface](docs/images/screenshot.png)
+
 ## Features
 
 - 🎵 **Real-time Audio Visualization** - Complex geometric and psychedelic visuals powered by ProjectM

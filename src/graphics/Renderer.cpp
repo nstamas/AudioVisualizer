@@ -135,6 +135,19 @@ void Renderer::DestroyFramebuffers() {
     }
 }
 
+void Renderer::Resize(int width, int height) {
+    if (width == width_ && height == height_) {
+        return; // No change
+    }
+    
+    width_ = width;
+    height_ = height;
+    
+    // Recreate framebuffers with new size
+    DestroyFramebuffers();
+    CreateFramebuffers();
+}
+
 void Renderer::BeginFrame() {
     // Bind main framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, mainFBO_);
